@@ -1,0 +1,9 @@
+order_id,order_date,customer_id,region,status,line_item_id,product_name,category,quantity,unit_price,discount_percent
+ORD-1,2026-01-10,C1,East,COMPLETED,L1,Widget,Electronics,2,100.00,10
+ORD-1,2026-01-10,C1,East,COMPLETED,L2,Mug,Home,1,20.00,0
+ORD-2,2026-01-20,C2,West,COMPLETED,L3,Shirt,Clothing,3,10.00,0
+ORD-3,2026-02-05,C1,East,RETURNED,L4,Shirt,Clothing,1,10.00,0
+ORD-4,2026-02-15,C3,West,CANCELLED,L5,Widget,Electronics,1,100.00,0
+ORD-5,2026-03-01,C3,West,COMPLETED,L6,Widget,Electronics,1,100.00,25
+ORD-5,2026-03-01,C3,West,COMPLETED,L7,Shirt,Clothing,1,10.00,0
+ORD-6,2026-04-12,C2,East,COMPLETED,L8,Mug,Home,1,33.33,15

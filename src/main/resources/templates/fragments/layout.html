@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · Sales Dashboard'">Sales Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<header th:fragment="topbar" class="topbar">
+    <div class="container">
+        <nav class="nav" aria-label="Main">
+            <a th:href="@{/}" th:classappend="${page == 'dashboard'} ? 'active'" th:attr="aria-current=${page == 'dashboard'} ? 'page'">Dashboard</a>
+            <a th:href="@{/transactions}" th:classappend="${page == 'transactions'} ? 'active'" th:attr="aria-current=${page == 'transactions'} ? 'page'">Transactions</a>
+        </nav>
+        <div class="topbar-actions" th:if="${hasData}">
+            <button type="button" class="btn btn-danger btn-sm" id="delete-dataset">Delete Dataset</button>
+        </div>
+    </div>
+</header>
+
+<!-- Shown instead of the dashboard / explorer while the database is empty -->
+<section th:fragment="startActions" class="start-panel">
+    <div class="row">
+        <button type="button" class="btn btn-primary" id="upload-csv">Upload CSV</button>
+        <button type="button" class="btn" id="load-sample">Load Sample Data</button>
+    </div>
+    <input type="file" id="csv-file" accept=".csv,text/csv" hidden>
+    <div id="dataset-error" class="notice error" role="alert" hidden></div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+
+<main class="container">
+    <!-- Empty database: only the two import actions -->
+    <th:block th:unless="${hasData}">
+        <section th:replace="~{fragments/layout :: startActions}"></section>
+    </th:block>
+
+    <!-- Dataset loaded: the full dashboard. It is not rendered at all while the database is empty. -->
+    <div id="dashboard" th:if="${hasData}">
+        <div class="page-head">
+            <h1>Sales Performance</h1>
+        </div>
+
+        <form id="filters" class="filters" aria-label="Dashboard filters">
+            <label class="field">Start date
+                <input type="date" name="startDate" th:min="${options.minDate()}" th:max="${options.maxDate()}">
+            </label>
+            <label class="field">End date
+                <input type="date" name="endDate" th:min="${options.minDate()}" th:max="${options.maxDate()}">
+            </label>
+            <label class="field">Category
+                <select name="category">
+                    <option value="">All categories</option>
+                    <option th:each="c : ${options.categories()}" th:value="${c}" th:text="${c}"></option>
+                </select>
+            </label>
+            <label class="field">Region
+                <select name="region">
+                    <option value="">All regions</option>
+                    <option th:each="r : ${options.regions()}" th:value="${r}" th:text="${r}"></option>
+                </select>
+            </label>
+            <div class="spacer"></div>
+            <button type="reset" class="btn" id="clear-filters">Clear filters</button>
+        </form>
+        <p class="filter-note" id="filter-note"></p>
+        <div id="error" class="notice error" hidden></div>
+
+        <section class="kpis" id="kpis" aria-label="Key metrics">
+            <div class="kpi"><div class="kpi-label">Total Revenue</div><div class="kpi-value" data-kpi="totalRevenue">–</div><div class="kpi-sub">Completed orders, after discounts</div></div>
+            <div class="kpi"><div class="kpi-label">Completed Orders</div><div class="kpi-value" data-kpi="completedOrders">–</div><div class="kpi-sub" data-kpi-sub="orders">&nbsp;</div></div>
+            <div class="kpi"><div class="kpi-label">Average Order Value</div><div class="kpi-value" data-kpi="averageOrderValue">–</div><div class="kpi-sub">Revenue ÷ completed orders</div></div>
+            <div class="kpi"><div class="kpi-label">Units Sold</div><div class="kpi-value" data-kpi="unitsSold">–</div><div class="kpi-sub">On completed orders</div></div>
+            <div class="kpi"><div class="kpi-label">Monthly Growth</div><div class="kpi-value" data-kpi="monthlyGrowth">–</div><div class="kpi-sub" data-kpi-sub="growth">&nbsp;</div></div>
+            <div class="kpi"><div class="kpi-label">Return Rate</div><div class="kpi-value" data-kpi="returnRatePct">–</div><div class="kpi-sub" data-kpi-sub="returns">&nbsp;</div></div>
+            <div class="kpi"><div class="kpi-label">Unique Customers</div><div class="kpi-value" data-kpi="uniqueCustomers">–</div><div class="kpi-sub">With ≥ 1 completed order</div></div>
+        </section>
+
+        <div class="grid">
+            <section class="card span-12">
+                <div class="card-head"><h2>Monthly Revenue</h2><span class="hint">Hover a month for orders and month-over-month change</span></div>
+                <div class="chart-box tall"><canvas id="chart-monthly" role="img" aria-label="Line chart of completed revenue by month"></canvas><div class="chart-empty">No data for these filters</div></div>
+            </section>
+
+            <section class="card span-7">
+                <div class="card-head"><h2>Revenue by Category</h2><span class="hint">Share of filtered revenue</span></div>
+                <div class="chart-box"><canvas id="chart-category" role="img" aria-label="Bar chart of revenue by product category"></canvas><div class="chart-empty">No data for these filters</div></div>
+            </section>
+
+            <section class="card span-5">
+                <div class="card-head"><h2>Order Status</h2><span class="hint">Share of orders</span></div>
+                <div class="chart-box"><canvas id="chart-status" role="img" aria-label="Doughnut chart of orders by status"></canvas><div class="chart-empty">No data for these filters</div></div>
+            </section>
+
+            <section class="card span-7">
+                <div class="card-head"><h2>Top 10 Products by Revenue</h2><span class="hint">Completed orders</span></div>
+                <div class="chart-box tall"><canvas id="chart-products" role="img" aria-label="Bar chart of the ten highest-revenue products"></canvas><div class="chart-empty">No data for these filters</div></div>
+            </section>
+
+            <section class="card span-5">
+                <div class="card-head"><h2>Sales by Region</h2><span class="hint">Revenue</span></div>
+                <div class="chart-box" style="height:200px"><canvas id="chart-region" role="img" aria-label="Bar chart of revenue by region"></canvas><div class="chart-empty">No data for these filters</div></div>
+                <table class="mini-table" aria-label="Region performance">
+                    <thead><tr><th>Region</th><th class="num">Revenue</th><th class="num">Orders</th><th class="num">AOV</th><th class="num">Return rate</th></tr></thead>
+                    <tbody id="region-table"></tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>

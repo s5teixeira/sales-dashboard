@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head('Transactions')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+
+<main class="container">
+    <!-- Empty database: only the two import actions -->
+    <th:block th:unless="${hasData}">
+        <section th:replace="~{fragments/layout :: startActions}"></section>
+    </th:block>
+
+    <div id="explorer" th:if="${hasData}">
+        <div class="page-head">
+            <div>
+                <h1>Transaction Explorer</h1>
+                <p>Every order with totals across its line items. Click a row to see the products in that order.</p>
+            </div>
+            <a class="btn" id="export-link" href="/api/transactions/export">Export CSV</a>
+        </div>
+
+        <form id="tx-filters" class="filters" aria-label="Transaction filters">
+            <label class="field" style="flex:1 1 220px">Search
+                <input type="search" name="search" maxlength="40" placeholder="Order ID or customer ID, e.g. ORD-10042">
+            </label>
+            <label class="field">Status
+                <select name="status">
+                    <option value="">All statuses</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="RETURNED">Returned</option>
+                    <option value="CANCELLED">Cancelled</option>
+                </select>
+            </label>
+            <label class="field">Category
+                <select name="category">
+                    <option value="">All categories</option>
+                    <option th:each="c : ${options.categories()}" th:value="${c}" th:text="${c}"></option>
+                </select>
+            </label>
+            <label class="field">Region
+                <select name="region">
+                    <option value="">All regions</option>
+                    <option th:each="r : ${options.regions()}" th:value="${r}" th:text="${r}"></option>
+                </select>
+            </label>
+            <label class="field">From
+                <input type="date" name="startDate" th:min="${options.minDate()}" th:max="${options.maxDate()}">
+            </label>
+            <label class="field">To
+                <input type="date" name="endDate" th:min="${options.minDate()}" th:max="${options.maxDate()}">
+            </label>
+            <label class="field">Sort
+                <select name="sort">
+                    <option value="DATE_DESC">Newest first</option>
+                    <option value="DATE_ASC">Oldest first</option>
+                    <option value="AMOUNT_DESC">Highest amount</option>
+                    <option value="AMOUNT_ASC">Lowest amount</option>
+                </select>
+            </label>
+            <button type="reset" class="btn">Clear</button>
+        </form>
+        <p class="filter-note">A category filter shows orders that contain at least one item in that category; amounts are the full order totals.</p>
+        <div id="tx-error" class="notice error" hidden></div>
+
+        <div class="table-wrap" id="tx-table-wrap" style="margin-top:12px">
+            <table>
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th><button type="button" class="sort-btn" data-sort="DATE">Order date <span class="arrow" aria-hidden="true">↓</span></button></th>
+                    <th>Customer</th>
+                    <th>Region</th>
+                    <th>Status</th>
+                    <th>Categories</th>
+                    <th class="num">Items</th>
+                    <th class="num">Units</th>
+                    <th class="num">Discount</th>
+                    <th class="num"><button type="button" class="sort-btn" data-sort="AMOUNT">Order amount <span class="arrow" aria-hidden="true">↓</span></button></th>
+                </tr>
+                </thead>
+                <tbody id="tx-body">
+                <tr><td colspan="10" class="muted">Loading…</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pager">
+            <span id="tx-summary" aria-live="polite"></span>
+            <div class="btns">
+                <label class="muted" style="font-size:13px">Rows
+                    <select id="tx-size" aria-label="Rows per page">
+                        <option>10</option><option selected>20</option><option>50</option><option>100</option>
+                    </select>
+                </label>
+                <button type="button" class="btn btn-sm" id="tx-prev">← Prev</button>
+                <span id="tx-page"></span>
+                <button type="button" class="btn btn-sm" id="tx-next">Next →</button>
+            </div>
+        </div>
+    </div>
+</main>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/transactions.js}"></script>
+</body>
+</html>

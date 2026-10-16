@@ -1,0 +1,213 @@
+/* Sales Dashboard */
+
+:root {
+  /* Tells the browser to draw native controls (date pickers, dropdowns, scrollbars) in dark mode */
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #15161d;            /* page background */
+  --surface: #242631;       /* cards and panels */
+  --surface-2: #303240;     /* inputs, table headers, hover */
+  --border: #3a3b49;
+  --grid: #2f3140;          /* chart gridlines */
+
+  /* Text */
+  --text: #f5f5f7;
+  --text-2: #d4d4d8;
+  --text-3: #a1a1aa;
+
+  /* Purple accents */
+  --accent: #7c3aed;        /* primary buttons, focus rings */
+  --accent-hover: #6d28d9;
+  --accent-light: #a78bfa;  /* links, sort arrows */
+  --accent-soft: rgba(124, 58, 237, 0.18); /* selected tab, chips, open row */
+  --lavender: #c4b5fd;      /* text on --accent-soft */
+
+  /* Order status (muted so they sit well on dark surfaces) */
+  --completed: #6ee7b7;
+  --completed-bg: rgba(110, 231, 183, 0.12);
+  --returned: #fbbf77;
+  --returned-bg: rgba(251, 191, 119, 0.12);
+  --cancelled: #f9a0ab;
+  --cancelled-bg: rgba(249, 160, 171, 0.12);
+
+  --radius: 10px;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent-light); }
+
+.container { max-width: 1320px; margin: 0 auto; padding: 0 20px; }
+
+/* ---------- Navigation ---------- */
+.topbar {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.topbar .container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 60px;
+}
+/* Negative margin lines the tab text up with the page content below it */
+.nav { display: flex; gap: 4px; flex: 1; margin-left: -12px; }
+.nav a {
+  color: var(--text-3); text-decoration: none; padding: 8px 12px; border-radius: 8px; font-weight: 500; white-space: nowrap;
+}
+.nav a:hover { background: var(--surface); color: var(--text); }
+.nav a.active { background: var(--accent-soft); color: var(--lavender); }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+
+/* ---------- Page header ---------- */
+.page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin: 28px 0 16px; }
+.page-head h1 { margin: 0; font-size: 24px; letter-spacing: -0.01em; }
+.page-head p { margin: 4px 0 0; color: var(--text-3); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  appearance: none; border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+  font: inherit; font-weight: 500; font-size: 14px; padding: 8px 14px; border-radius: 8px;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; white-space: nowrap;
+}
+.btn:hover { border-color: var(--accent-light); }
+.btn:disabled { opacity: 0.45; cursor: default; border-color: var(--border); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-danger { color: var(--cancelled); background: var(--cancelled-bg); border-color: transparent; }
+.btn-danger:hover { border-color: var(--cancelled); }
+.btn-sm { padding: 5px 10px; font-size: 13px; }
+
+/* ---------- Form controls ---------- */
+label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+input[type="date"], input[type="search"], input[type="text"], select {
+  font: inherit; font-size: 14px; color: var(--text); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; min-height: 36px;
+}
+input::placeholder { color: var(--text-3); }
+select option { background: var(--surface-2); color: var(--text); }
+input:focus, select:focus { outline: none; border-color: var(--accent-light); box-shadow: 0 0 0 3px var(--accent-soft); }
+.btn:focus-visible { outline: 2px solid var(--accent-light); outline-offset: 2px; }
+
+/* ---------- Filter bar ---------- */
+.filters {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.filters .spacer { flex: 1; }
+.filter-note { font-size: 13px; color: var(--text-3); margin: 8px 2px 0; }
+.active-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--accent-soft); color: var(--lavender); border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+
+/* ---------- KPI cards ---------- */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 12px; margin: 18px 0; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; min-width: 0;
+}
+.kpi-label { font-size: 13px; color: var(--text-3); font-weight: 500; }
+.kpi-value { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-top: 2px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.delta { font-weight: 600; }
+.delta.up { color: var(--completed); }
+.delta.down { color: var(--cancelled); }
+
+/* ---------- Cards / charts ---------- */
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(12, 1fr); margin-bottom: 16px; }
+.span-12 { grid-column: span 12; }
+.span-7 { grid-column: span 7; }
+.span-5 { grid-column: span 5; }
+.span-6 { grid-column: span 6; }
+@media (max-width: 980px) {
+  .span-7, .span-5, .span-6 { grid-column: span 12; }
+}
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; min-width: 0;
+}
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.card h2 { font-size: 15px; margin: 0; font-weight: 600; }
+.card .hint { font-size: 12px; color: var(--text-3); }
+.chart-box { position: relative; height: 300px; }
+.chart-box.tall { height: 340px; }
+.chart-empty { position: absolute; inset: 0; display: none; place-items: center; color: var(--text-3); font-size: 14px; }
+.chart-box.is-empty canvas { visibility: hidden; }
+.chart-box.is-empty .chart-empty { display: grid; }
+
+/* ---------- Tables ---------- */
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { color: var(--text-2); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); font-weight: 600; background: var(--surface-2); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td b { color: var(--text); }
+tbody tr:last-child td { border-bottom: 0; }
+.mini-table th { background: transparent; }
+.mini-table td, .mini-table th { padding: 6px 8px; }
+.sort-btn { all: unset; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
+.sort-btn:hover { color: var(--text); }
+.sort-btn:focus-visible { outline: 2px solid var(--accent-light); }
+.sort-btn .arrow { opacity: .35; }
+.sort-btn.active .arrow { opacity: 1; color: var(--accent-light); }
+tr.order-row { cursor: pointer; }
+tr.order-row:hover td { background: var(--surface-2); }
+tr.order-row.open td { background: var(--accent-soft); }
+tr.detail-row td { background: var(--bg); white-space: normal; padding: 12px 16px 16px; }
+.mono { font-family: var(--mono); font-size: 13px; }
+.link-btn { all: unset; color: var(--accent-light); cursor: pointer; font-family: var(--mono); font-size: 13px; }
+.link-btn:hover { color: var(--lavender); text-decoration: underline; }
+.link-btn:focus-visible { outline: 2px solid var(--accent-light); }
+
+/* ---------- Status badges ---------- */
+.badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge.COMPLETED { color: var(--completed); background: var(--completed-bg); }
+.badge.RETURNED { color: var(--returned); background: var(--returned-bg); }
+.badge.CANCELLED { color: var(--cancelled); background: var(--cancelled-bg); }
+
+/* ---------- Pagination ---------- */
+.pager { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; color: var(--text-3); font-size: 14px; }
+.pager .btns { display: flex; gap: 6px; align-items: center; }
+
+/* ---------- Notices ---------- */
+.notice { border-radius: var(--radius); padding: 12px 16px; font-size: 14px; margin: 12px 0; border: 1px solid transparent; }
+.notice.error { background: var(--cancelled-bg); color: var(--cancelled); border-color: rgba(249, 160, 171, 0.3); }
+.notice ul { margin: 6px 0 0; padding-left: 18px; }
+
+/* ---------- Empty database: Upload CSV / Load Sample Data ---------- */
+.start-panel { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 120px 0 80px; }
+.start-panel .notice { max-width: 640px; width: 100%; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: center; }
+
+.muted { color: var(--text-3); }
+.loading { opacity: .55; transition: opacity .15s; }
+main.container { padding-bottom: 40px; }
+
+/* ---------- Phones ---------- */
+@media (max-width: 640px) {
+  .container { padding: 0 16px; }
+  .nav { overflow-x: auto; }
+  .kpi-value { font-size: 20px; }
+  .filters > label.field, .filters > .field { flex: 1 1 140px; }
+  .filters input, .filters select { width: 100%; }
+  .chart-box { height: 260px; }
+}
